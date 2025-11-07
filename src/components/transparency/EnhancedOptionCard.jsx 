@@ -1,0 +1,130 @@
+import React, { useState, useEffect, useRef } from ‘react’;
+
+const EnhancedSearchBar = ({ onSearch, placeholder = “Search your thoughts, decisions, or ask anything…” }) => {
+const [query, setQuery] = useState(’’);
+const [isActive, setIsActive] = useState(false);
+const [shouldPulse, setShouldPulse] = useState(true);
+const [hasBeenUsed, setHasBeenUsed] = useState(false);
+const inputRef = useRef(null);
+const pulseTimeoutRef = useRef(null);
+
+useEffect(() => {
+const searchUsed = localStorage.getItem(‘brahma-search-used’);
+if (searchUsed) {
+setHasBeenUsed(true);
+setShouldPulse(false);
+}
+
+```
+if (!hasBeenUsed) {
+  const interval = setInterval(() => {
+    setShouldPulse(true);
+    setTimeout(() => setShouldPulse(false), 3000);
+  }, 10000);
+  return () => clearInterval(interval);
+}
+```
+
+}, [hasBeenUsed]);
+
+useEffect(() => {
+if (query.length > 0) {
+clearTimeout(pulseTimeoutRef.current);
+pulseTimeoutRef.current = setTimeout(() => {
+setShouldPulse(true);
+setTimeout(() => setShouldPulse(false), 2000);
+}, 1000);
+}
+return () => clearTimeout(pulseTimeoutRef.current);
+}, [query]);
+
+const handleSearch = (e) => {
+e.preventDefault();
+if (query.trim()) {
+localStorage.setItem(‘brahma-search-used’, ‘true’);
+setHasBeenUsed(true);
+setShouldPulse(false);
+onSearch(query.trim());
+}
+};
+
+const handleFocus = () => {
+setIsActive(true);
+setShouldPulse(false);
+};
+
+const handleBlur = () => {
+setIsActive(false);
+};
+
+return (
+<div className="relative w-full max-w-2xl mx-auto mb-6">
+<div className="relative">
+<div className={`relative bg-white/10 backdrop-blur-md rounded-full border-2 transition-all duration-300 ${ isActive  ? 'border-purple-500 shadow-lg shadow-purple-500/25'  : 'border-white/20 hover:border-white/40' }`}>
+
+```
+      {/* Search Icon with Pulse Effect */}
+      <div className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10">
+        <div className={`relative ${shouldPulse && !isActive ? 'animate-pulse' : ''}`}>
+          <div className={`w-5 h-5 text-gray-400 transition-all duration-300 ${
+            isActive ? 'text-purple-400' : ''
+          }`}>
+            🔍
+          </div>
+          
+          {shouldPulse && !isActive && (
+            <>
+              <div className="absolute inset-0 -m-2">
+                <div className="w-9 h-9 border-2 border-purple-400/50 rounded-full animate-ping"></div>
+              </div>
+              <div className="absolute inset-0 -m-1 bg-purple-500/20 rounded-full blur-sm animate-pulse"></div>
+            </>
+          )}
+        </div>
+      </div>
+
+      <input
+        ref={inputRef}
+        type="text"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        onKeyPress={(e) => {
+          if (e.key === 'Enter') {
+            handleSearch(e);
+          }
+        }}
+        placeholder={placeholder}
+        className="w-full bg-transparent text-white placeholder-gray-400 pl-12 pr-20 py-4 rounded-full focus:outline-none text-sm"
+      />
+
+      <button
+        type="button"
+        onClick={handleSearch}
+        disabled={!query.trim()}
+        className={`absolute right-2 top-1/2 transform -translate-y-1/2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+          query.trim()
+            ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white'
+            : 'bg-white/10 text-gray-500 cursor-not-allowed'
+        }`}
+      >
+        Ask
+      </button>
+    </div>
+
+    {!hasBeenUsed && !isActive && (
+      <div className="absolute top-full left-0 right-0 mt-2 text-center">
+        <p className="text-xs text-gray-400 animate-fade-in">
+          ✨ Try asking about your decisions, search your notes, or explore new ideas
+        </p>
+      </div>
+    )}
+  </div>
+</div>
+```
+
+);
+};
+
+export default EnhancedSearchBar;

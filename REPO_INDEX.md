@@ -1,0 +1,7 @@
+- src/components/transparency/TransparencyEngine.jsx
+- src/context-engine/ContextEngineRoot.jsx
+- src/store/cognitiveField.js
+- src/bridges/transparencyBridge.js
+- src/services/llmService.js
+- src/context/LocalMemoryContext.jsx
+- src/hooks/useSageOrchestrator.js

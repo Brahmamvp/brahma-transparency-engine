@@ -1,0 +1,480 @@
+import React, { useState, useEffect } from 'react';
+
+const QuestSidebar = ({ isOpen, onClose }) => {
+  const [quests, setQuests] = useState([]);
+  const [activeTab, setActiveTab] = useState('active');
+  const [showNewQuest, setShowNewQuest] = useState(false);
+  const [newQuest, setNewQuest] = useState({
+    title: '',
+    intention: '',
+    significance: 'meaningful',
+    companion: 'sage',
+    fulfillmentWindow: '',
+    steps: []
+  });
+
+  useEffect(() => {
+    const savedQuests = localStorage.getItem('brahma-quests');
+    if (savedQuests) {
+      setQuests(JSON.parse(savedQuests));
+    }
+  }, []);
+
+  const saveQuests = (updatedQuests) => {
+    setQuests(updatedQuests);
+    localStorage.setItem('brahma-quests', JSON.stringify(updatedQuests));
+  };
+
+  const handleCreateQuest = () => {
+    if (!newQuest.title.trim()) return;
+
+    const quest = {
+      ...newQuest,
+      id: Date.now(),
+      status: 'active',
+      createdAt: new Date().toISOString(),
+      steps: newQuest.steps.map((step, index) => ({
+        id: index + 1,
+        text: step,
+        completed: false
+      }))
+    };
+
+    saveQuests([...quests, quest]);
+    setNewQuest({
+      title: '',
+      intention: '',
+      significance: 'meaningful',
+      companion: 'sage',
+      fulfillmentWindow: '',
+      steps: []
+    });
+    setShowNewQuest(false);
+  };
+
+  const toggleQuestStep = (questId, stepId) => {
+    const updatedQuests = quests.map(quest => {
+      if (quest.id === questId) {
+        const updatedSteps = quest.steps.map(step =>
+          step.id === stepId ? { ...step, completed: !step.completed } : step
+        );
+        return { ...quest, steps: updatedSteps };
+      }
+      return quest;
+    });
+    saveQuests(updatedQuests);
+  };
+
+  const fulfillQuest = (questId) => {
+    const updatedQuests = quests.map(quest =>
+      quest.id === questId ? { ...quest, status: 'fulfilled', fulfilledAt: new Date().toISOString() } : quest
+    );
+    saveQuests(updatedQuests);
+  };
+
+  const companions = [
+    { id: 'sage', name: 'Sage', emoji: '🧙‍♀️', description: 'Wisdom and reflection' },
+    { id: 'strategist', name: 'Strategist', emoji: '🎯', description: 'Planning and execution' },
+    { id: 'witness', name: 'Witness', emoji: '👁️', description: 'Presence and awareness' },
+    { id: 'shadow', name: 'Shadow', emoji: '🌙', description: 'Creative provocation' }
+  ];
+
+  const significance = [
+    { id: 'casual', name: 'Casual', emoji: '💫', color: 'text-blue-400' },
+    { id: 'meaningful', name: 'Meaningful', emoji: '⭐', color: 'text-purple-400' },
+    { id: 'sacred', name: 'Sacred', emoji: '🕊️', color: 'text-emerald-400' }
+  ];
+
+  const activeQuests = quests.filter(q => q.status === 'active');
+  const fulfilledQuests = quests.filter(q => q.status === 'fulfilled');
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50">
+      <div className="flex h-full">
+        <div className="w-96 bg-white/10 backdrop-blur-md border-r border-white/20 shadow-2xl overflow-hidden">
+          <div className="p-6 border-b border-white/10 bg-gradient-to-r from-purple-600/20 to-pink-600/20">
+            <div className="flex justify-between items-center mb-4">
+              <div>
+                <h2 className="text-xl font-semibold text-white flex items-center gap-2">
+                  <span>📖</span>
+                  Quest Journal
+                </h2>
+                <p className="text-xs text-gray-300">Your journey of intentional growth</p>
+              </div>
+              <button
+                onClick={onClose}
+                className="text-gray-400 hover:text-white text-xl transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="flex bg-white/10 rounded-xl p-1">
+              <button
+                onClick={() => setActiveTab('active')}
+                className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all ${
+                  activeTab === 'active'
+                    ? 'bg-purple-600/50 text-white'
+                    : 'text-gray-300 hover:text-white'
+                }`}
+              >
+                Active ({activeQuests.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('fulfilled')}
+                className={`flex-1 py-2 px-3 rounded-lg text-xs font-medium transition-all ${
+                  activeTab === 'fulfilled'
+                    ? 'bg-purple-600/50 text-white'
+                    : 'text-gray-300 hover:text-white'
+                }`}
+              >
+                Fulfilled ({fulfilledQuests.length})
+              </button>
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4">
+            {activeTab === 'active' && (
+              <div className="space-y-4">
+                <button
+                  onClick={() => setShowNewQuest(true)}
+                  className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white p-4 rounded-xl font-medium transition-all flex items-center justify-center gap-2"
+                >
+                  <span>✨</span>
+                  Begin New Quest
+                </button>
+
+                {activeQuests.map(quest => (
+                  <QuestCard
+                    key={quest.id}
+                    quest={quest}
+                    onToggleStep={toggleQuestStep}
+                    onFulfill={fulfillQuest}
+                    companions={companions}
+                    significance={significance}
+                  />
+                ))}
+
+                {activeQuests.length === 0 && !showNewQuest && (
+                  <div className="text-center py-12">
+                    <div className="text-4xl mb-4">🌟</div>
+                    <h3 className="text-lg font-medium text-white mb-2">No Active Quests</h3>
+                    <p className="text-gray-300 text-sm">Every journey begins with a single intention</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'fulfilled' && (
+              <div className="space-y-4">
+                {fulfilledQuests.map(quest => (
+                  <FulfilledQuestCard
+                    key={quest.id}
+                    quest={quest}
+                    companions={companions}
+                    significance={significance}
+                  />
+                ))}
+
+                {fulfilledQuests.length === 0 && (
+                  <div className="text-center py-12">
+                    <div className="text-4xl mb-4">🏆</div>
+                    <h3 className="text-lg font-medium text-white mb-2">No Fulfilled Quests Yet</h3>
+                    <p className="text-gray-300 text-sm">Your completed journeys will appear here</p>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+        <div className="flex-1" onClick={onClose}></div>
+      </div>
+
+      {showNewQuest && (
+        <NewQuestModal
+          quest={newQuest}
+          setQuest={setNewQuest}
+          onSave={handleCreateQuest}
+          onCancel={() => setShowNewQuest(false)}
+          companions={companions}
+          significance={significance}
+        />
+      )}
+    </div>
+  );
+};
+
+const QuestCard = ({ quest, onToggleStep, onFulfill, companions, significance }) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+  const completedSteps = quest.steps?.filter(step => step.completed).length || 0;
+  const totalSteps = quest.steps?.length || 0;
+  const progress = totalSteps > 0 ? (completedSteps / totalSteps) * 100 : 0;
+
+  const companion = companions.find(c => c.id === quest.companion);
+  const sig = significance.find(s => s.id === quest.significance);
+
+  return (
+    <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/20 hover:bg-white/15 transition-all">
+      <div className="flex justify-between items-start mb-3">
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-1">
+            <span className={sig?.color || 'text-purple-400'}>{sig?.emoji || '⭐'}</span>
+            <h3 className="font-medium text-white text-sm">{quest.title}</h3>
+          </div>
+          <p className="text-xs text-gray-300">{quest.intention}</p>
+        </div>
+        <div className="flex items-center gap-1 ml-2">
+          <span className="text-xs">{companion?.emoji || '🧙‍♀️'}</span>
+        </div>
+      </div>
+
+      {totalSteps > 0 && (
+        <div className="mb-3">
+          <div className="flex justify-between text-xs text-gray-400 mb-1">
+            <span>{completedSteps}/{totalSteps} steps</span>
+            <span>{Math.round(progress)}%</span>
+          </div>
+          <div className="w-full bg-white/10 rounded-full h-2">
+            <div
+              className="bg-gradient-to-r from-purple-500 to-pink-500 h-2 rounded-full transition-all duration-300"
+              style={{ width: `${progress}%` }}
+            ></div>
+          </div>
+        </div>
+      )}
+
+      {isExpanded && quest.steps && quest.steps.length > 0 && (
+        <div className="space-y-2 mb-3">
+          {quest.steps.map(step => (
+            <div key={step.id} className="flex items-center gap-3">
+              <button
+                onClick={() => onToggleStep(quest.id, step.id)}
+                className={`w-4 h-4 rounded border-2 transition-all ${
+                  step.completed
+                    ? 'bg-green-500 border-green-500'
+                    : 'border-gray-400 hover:border-white'
+                }`}
+              >
+                {step.completed && <span className="text-white text-xs">✓</span>}
+              </button>
+              <span className={`text-sm ${step.completed ? 'text-gray-400 line-through' : 'text-gray-200'}`}>
+                {step.text}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="flex gap-2">
+        {totalSteps > 0 && (
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="flex-1 bg-white/10 hover:bg-white/20 px-3 py-2 rounded-lg text-xs text-gray-300 hover:text-white transition-all"
+          >
+            {isExpanded ? 'Hide Steps' : 'Show Steps'}
+          </button>
+        )}
+
+        {progress === 100 && totalSteps > 0 && (
+          <button
+            onClick={() => onFulfill(quest.id)}
+            className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 px-4 py-2 rounded-lg text-xs text-white font-medium transition-all"
+          >
+            ✨ Mark Fulfilled
+          </button>
+        )}
+
+        {totalSteps === 0 && (
+          <button
+            onClick={() => onFulfill(quest.id)}
+            className="bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 px-4 py-2 rounded-lg text-xs text-white font-medium transition-all"
+          >
+            ✨ Mark Fulfilled
+          </button>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const FulfilledQuestCard = ({ quest, companions, significance }) => {
+  const companion = companions.find(c => c.id === quest.companion);
+  const sig = significance.find(s => s.id === quest.significance);
+
+  return (
+    <div className="bg-emerald-500/20 backdrop-blur-sm rounded-xl p-4 border border-emerald-400/30">
+      <div className="flex justify-between items-start mb-2">
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-1">
+            <span className="text-emerald-400">🏆</span>
+            <span className={sig?.color || 'text-emerald-400'}>{sig?.emoji || '⭐'}</span>
+            <h3 className="font-medium text-white text-sm">{quest.title}</h3>
+          </div>
+          <p className="text-xs text-emerald-200">{quest.intention}</p>
+        </div>
+        <span className="text-xs">{companion?.emoji || '🧙‍♀️'}</span>
+      </div>
+
+      <div className="text-xs text-emerald-300">
+        Fulfilled on {new Date(quest.fulfilledAt).toLocaleDateString()}
+      </div>
+    </div>
+  );
+};
+
+const NewQuestModal = ({ quest, setQuest, onSave, onCancel, companions, significance }) => {
+  const [currentStep, setCurrentStep] = useState('');
+
+  const addStep = () => {
+    if (currentStep.trim()) {
+      setQuest(prev => ({
+        ...prev,
+        steps: [...prev.steps, currentStep.trim()]
+      }));
+      setCurrentStep('');
+    }
+  };
+
+  const removeStep = (index) => {
+    setQuest(prev => ({
+      ...prev,
+      steps: prev.steps.filter((_, i) => i !== index)
+    }));
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-60 p-4">
+      <div className="bg-white/10 backdrop-blur-md rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-white/20">
+        <div className="text-center mb-6">
+          <div className="text-3xl mb-3">✨</div>
+          <h2 className="text-xl font-bold text-white mb-2">Begin New Quest</h2>
+          <p className="text-gray-300 text-sm">Every meaningful journey starts with clear intention</p>
+        </div>
+
+        <div className="space-y-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-200 mb-2">Quest Title</label>
+            <input
+              type="text"
+              value={quest.title}
+              onChange={(e) => setQuest(prev => ({ ...prev, title: e.target.value }))}
+              placeholder="What journey are you embarking on?"
+              className="w-full bg-white/10 text-white placeholder-gray-400 px-4 py-3 rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-200 mb-2">Intention</label>
+            <textarea
+              value={quest.intention}
+              onChange={(e) => setQuest(prev => ({ ...prev, intention: e.target.value }))}
+              placeholder="Why does this quest matter to you? What do you hope to discover or achieve?"
+              className="w-full h-20 bg-white/10 text-white placeholder-gray-400 px-4 py-3 rounded-xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-200 mb-2">Significance</label>
+              <div className="space-y-2">
+                {significance.map(sig => (
+                  <button
+                    key={sig.id}
+                    onClick={() => setQuest(prev => ({ ...prev, significance: sig.id }))}
+                    className={`w-full text-left p-3 rounded-lg text-sm transition-all ${
+                      quest.significance === sig.id
+                        ? 'bg-purple-600/50 text-white border border-purple-500'
+                        : 'bg-white/10 text-gray-300 hover:bg-white/20'
+                    }`}
+                  >
+                    <span className="mr-2">{sig.emoji}</span>
+                    {sig.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-200 mb-2">Quest Companion</label>
+              <div className="space-y-2">
+                {companions.map(comp => (
+                  <button
+                    key={comp.id}
+                    onClick={() => setQuest(prev => ({ ...prev, companion: comp.id }))}
+                    className={`w-full text-left p-3 rounded-lg text-sm transition-all ${
+                      quest.companion === comp.id
+                        ? 'bg-purple-600/50 text-white border border-purple-500'
+                        : 'bg-white/10 text-gray-300 hover:bg-white/20'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span>{comp.emoji}</span>
+                      <div>
+                        <div className="font-medium">{comp.name}</div>
+                        <div className="text-xs text-gray-400">{comp.description}</div>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-200 mb-2">Quest Steps (Optional)</label>
+            <div className="space-y-2 mb-3">
+              {quest.steps.map((step, index) => (
+                <div key={index} className="flex items-center gap-2 bg-white/10 rounded-lg px-3 py-2">
+                  <span className="text-gray-300 text-sm flex-1">{step}</span>
+                  <button
+                    onClick={() => removeStep(index)}
+                    className="text-red-400 hover:text-red-300 text-xs"
+                  >
+                    ✕
+                  </button>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={currentStep}
+                onChange={(e) => setCurrentStep(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && addStep()}
+                placeholder="Add a step..."
+                className="flex-1 bg-white/10 text-white placeholder-gray-400 px-3 py-2 rounded-lg border border-white/20 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
+              />
+              <button
+                onClick={addStep}
+                className="bg-purple-600 hover:bg-purple-700 px-4 py-2 rounded-lg text-white text-sm transition-colors"
+              >
+                Add
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex gap-4 mt-8">
+          <button
+            onClick={onCancel}
+            className="flex-1 bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white px-6 py-3 rounded-xl font-medium transition-all"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onSave}
+            disabled={!quest.title.trim()}
+            className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 disabled:opacity-50 text-white px-6 py-3 rounded-xl font-medium transition-all"
+          >
+            ✨ Begin Quest
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default QuestSidebar;

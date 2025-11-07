@@ -1,0 +1,274 @@
+/* -----------------------------------------------------------------------
+   Brahma Transparency Engine — Global Styles
+   Path: src/styles/global.css
+   ----------------------------------------------------------------------- */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------- Base / Document ---------------------------- */
+
+:root {
+  --brahma-dark: #1a1625;
+  --brahma-purple: #2d1b69;
+  --brahma-medium: #4c2885;
+  --brahma-light: #6b46c1;
+  --brahma-accent: #8b5cf6;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Apple Color Emoji', 'Segoe UI Emoji';
+  color: #ffffff;
+  background: linear-gradient(
+    135deg,
+    var(--brahma-dark) 0%,
+    var(--brahma-purple) 25%,
+    var(--brahma-medium) 50%,
+    var(--brahma-light) 75%,
+    var(--brahma-accent) 100%
+  );
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Prefer-reduced-motion: keep the vibe but be respectful */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------------------------- Glass ----------------------------------- */
+
+.glassmorphism {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.35);
+  border-radius: 0.75rem;
+}
+
+.glassmorphism-strong {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
+  border-radius: 0.9rem;
+}
+
+/* --------------------------- Particles -------------------------------- */
+
+.brahma-particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.brahma-particle {
+  position: absolute;
+  width: var(--size, 6px);
+  height: var(--size, 6px);
+  background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.9), rgba(255,255,255,.05));
+  border-radius: 50%;
+  opacity: 0.6;
+  filter: blur(0.4px);
+  animation: brahma-float var(--dur, 8s) ease-in-out infinite alternate;
+}
+
+/* variety */
+.brahma-particle:nth-child(2n) {
+  animation-name: brahma-float-reverse;
+  opacity: 0.5;
+}
+.brahma-particle:nth-child(3n) {
+  animation-name: brahma-pulse;
+  opacity: 0.7;
+}
+
+@keyframes brahma-float {
+  from { transform: translate3d(0, 0, 0); }
+  to   { transform: translate3d(var(--dx, 8px), var(--dy, -22px), 0); }
+}
+
+@keyframes brahma-float-reverse {
+  from { transform: translate3d(var(--dx, 8px), var(--dy, -22px), 0); }
+  to   { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes brahma-pulse {
+  0%   { opacity: 0.35; transform: scale(0.85); }
+  50%  { opacity: 0.85; transform: scale(1.15); }
+  100% { opacity: 0.35; transform: scale(0.85); }
+}
+
+/* --------------------------- Avatar FX -------------------------------- */
+
+.sage-avatar {
+  animation: breathe 4s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+@keyframes breathe {
+  0%, 100% { transform: scale(1);   opacity: 0.92; }
+  50%      { transform: scale(1.05); opacity: 1; }
+}
+
+/* --------------------------- Tooltips --------------------------------- */
+
+.tooltip {
+  position: relative;
+}
+
+.tooltip .tooltip-content {
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  transform: translateX(-50%) translateY(-8px);
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: 0.375rem;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .15s ease, transform .15s ease;
+}
+
+.tooltip:hover .tooltip-content,
+.tooltip:focus-within .tooltip-content {
+  opacity: 1;
+  transform: translateX(-50%) translateY(-12px);
+}
+
+/* -------------------------- Overlays/Modals --------------------------- */
+
+.brahma-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(1200px 800px at 70% 40%, rgba(24,24,27,.5), rgba(0,0,0,.7));
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 50;
+}
+
+.brahma-modal {
+  @apply rounded-2xl border border-white/20 shadow-glow;
+  background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.06));
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+/* ------------------------ Scrollbars (WebKit) ------------------------- */
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: rgba(255,255,255,0.06);
+}
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(139,92,246,.8), rgba(109,40,217,.8));
+  border-radius: 9999px;
+  border: 2px solid rgba(0,0,0,0.2);
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(168,85,247,.95), rgba(124,58,237,.95));
+}
+
+/* Ensure side panel is scrollable (class used by the left nav) */
+.brahma-sidepanel {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ------------------------- Text / Utilities --------------------------- */
+
+.text-shadow {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, .18);
+}
+
+.badge {
+  @apply inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium;
+  background: rgba(255,255,255,.12);
+  border: 1px solid rgba(255,255,255,.18);
+}
+
+/* focus ring for keyboard users */
+.focus-ring {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+.focus-ring:focus-visible {
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.6);
+  border-radius: 0.5rem;
+}
+
+/* buttons (if you need a quick non-TW class) */
+.btn-glass {
+  @apply px-3 py-2 rounded-lg;
+  background: rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.18);
+  transition: background .15s ease, transform .15s ease;
+}
+.btn-glass:hover { background: rgba(255,255,255,0.16); transform: translateY(-1px); }
+.btn-glass:active { transform: translateY(0); }
+
+/* subtle card hover */
+.card-hover {
+  transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,.25);
+  background: rgba(255,255,255,.06);
+}
+
+/* --------------------- Tailwind @layer helpers ------------------------ */
+
+@layer utilities {
+  .bg-brahma-gradient {
+    background-image: linear-gradient(
+      135deg,
+      var(--brahma-dark) 0%,
+      var(--brahma-purple) 25%,
+      var(--brahma-medium) 50%,
+      var(--brahma-light) 75%,
+      var(--brahma-accent) 100%
+    );
+  }
+  .glass-border { border: 1px solid rgba(255,255,255,.18); }
+  .glass-bg { background: rgba(255,255,255,.10); }
+}
+
+/* -------------------------- Print (optional) -------------------------- */
+
+@media print {
+  .brahma-particles,
+  .sage-avatar,
+  .btn-glass { display: none !important; }
+  body {
+    background: #0b0b12 !important;
+  }
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn { animation: fadeIn 0.3s ease-out; }

@@ -1,0 +1,56 @@
+// src/agents/LocalNavigatorAgent.jsx
+import localContextSchema from "../schemas/localContextSchema";
+import { formatDistanceToNow } from "date-fns";
+
+/**
+ * Analyze local context and return friction-aware suggestions.
+ * This should be called before any major decision is finalized.
+ */
+export function analyzeLocalContext(userContext = {}) {
+  const { userLocale, logisticalFriction = [], culturalSpecificity = [], economicConstraints = [] } = userContext;
+
+  const interventions = [];
+
+  // ----- LOGISTICAL FRICTION CHECK -----
+  const lowTransit = logisticalFriction.find(item => item.tag === "transit_access" && item.value <= 2);
+  if (lowTransit) {
+    interventions.push({
+      type: "logistical",
+      message: `⚠️ Transit access in your area is limited (score: ${lowTransit.value}). This may increase stress, time, and cost. Would you like Sage to find more local or online options?`
+    });
+  }
+
+  // ----- CULTURAL CONTEXT CHECK -----
+  const culturalNote = culturalSpecificity.find(item => item.tag === "cultural_business_focus" && item.satisfaction <= 3);
+  if (culturalNote) {
+    interventions.push({
+      type: "cultural",
+      message: `🌍 You've noted some cultural mismatch or discomfort in your area (${culturalNote.description}). Would you like to explore nearby alternatives with stronger alignment?`
+    });
+  }
+
+  // ----- ECONOMIC CEILING CHECK -----
+  const lowOpportunity = economicConstraints.find(item => item.tag === "industry_ceiling" && item.impactScore <= 3);
+  if (lowOpportunity) {
+    interventions.push({
+      type: "economic",
+      message: `📉 Local industry ceiling is low (score: ${lowOpportunity.impactScore}). This might limit long-term options. Would you like to look at hybrid/remote pathways?`
+    });
+  }
+
+  return interventions;
+}
+
+/**
+ * Friendly system explainer for debugging or transparency tools
+ */
+export function summarizeContextMeta(userContext = {}) {
+  const { userLocale } = userContext;
+  if (!userLocale) return "🌐 No local data available yet.";
+
+  const lastUpdated = userLocale.lastUpdated
+    ? formatDistanceToNow(new Date(userLocale.lastUpdated), { addSuffix: true })
+    : "unknown";
+
+  return `📍 Local context data loaded for region: ${userLocale.regionName || "unknown"} (${userLocale.zipPrefix}). Last updated ${lastUpdated}.`;
+}

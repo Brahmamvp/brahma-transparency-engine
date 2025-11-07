@@ -1,0 +1,34 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2025-10-18",
+  "governance_status": "Operational (Phase 2)",
+  "policies": [
+    {
+      "id": "p001",
+      "title": "Memory Sovereignty Protocol",
+      "tags": ["memory", "privacy", "ethics"],
+      "summary": "All WisdomMemory data is local-first, encrypted, and owned by the user. User has the right to redacting, masking, and exporting any data point at any time.",
+      "changelog": "Initial release, aligned with Local-First Architecture v0.9."
+    },
+    {
+      "id": "p002",
+      "title": "Agent Override & Audit Protocol",
+      "tags": ["safety", "sentinel", "transparency"],
+      "summary": "Every agent action and model invocation is logged in the immutable Decision Explorer. Users can request alternate reasoning ('Show Reasoning') or pause the agent at any time.",
+      "changelog": "Includes new 'Flag This Decision' logging path to WisdomMemory."
+    },
+    {
+      "id": "p003",
+      "title": "Crisis Signal Escalation",
+      "tags": ["safety", "crisis", "sentinel"],
+      "summary": "The Sentinel Agent monitors for critical threshold events (e.g., self-harm, financial panic) and immediately routes to the Crisis Signal Pipeline, overriding all other agent logic.",
+      "changelog": "Initial integration with time-aware override control."
+    }
+  ],
+  "default_flags": [
+    {"type": "Bias", "description": "The reasoning seems to contain ethical or systemic bias."},
+    {"type": "Harm", "description": "The advice is potentially harmful or dangerous (e.g., self-harm, unverified code)."},
+    {"type": "Source", "description": "The source or reasoning is unclear, non-transparent, or hallucinated."},
+    {"type": "Policy", "description": "The action seems to violate a defined Brahma policy (P001, P002, etc.)."}
+  ]
+}

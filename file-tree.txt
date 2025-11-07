@@ -1,0 +1,114 @@
+src
+├── admin
+│   ├── analytics
+│   │   └── UsageGraph.jsx
+│   ├── InstrumentCluster.tsx
+│   └── telemetry
+│       ├── IdentityCloud.jsx
+│       └── LiveSessionGauge.jsx
+├── App.css
+├── App.jsx
+├── assets
+│   └── react.svg
+├── components
+│   ├── AddArtifactForm.jsx
+│   ├── ArtifactCard.jsx
+│   ├── ArtifactGallery.jsx
+│   ├── common
+│   │   ├── DataShadowPanel.jsx
+│   │   ├── EnhancedSearchBar.jsx
+│   │   ├── EnhancedTooltip.jsx
+│   │   ├── interactiveSageAvatar.jsx
+│   │   ├── ModuleContainer.jsx
+│   │   ├── ModuleLoadingState.jsx
+│   │   ├── ModuleWrapper.jsx
+│   │   ├── ParticleBackground.jsx
+│   │   ├── PrivacyBadge.jsx
+│   │   ├── SageAvatar.jsx
+│   │   ├── ThemePanel.jsx
+│   │   ├── themes.js
+│   │   ├── VoiceInput.jsx
+│   │   └── WebSearchIntegration.jsx
+│   ├── ContextCapture.jsx
+│   ├── ContextStats.jsx
+│   ├── ContextTimeline.jsx
+│   ├── DataShadowPanel.jsx 
+│   ├── DecisionExplorer.jsx
+│   ├── demos
+│   │   └── AvatarLab.jsx
+│   ├── EmotionalOverlay.jsx
+│   ├── GlassPanel.jsx
+│   ├── InsightPreview.jsx
+│   ├── intelligence
+│   │   ├── BrahmaHybridIntelligence.jsx
+│   │   └── TemporalIntelligenceEngine.jsx
+│   ├── language
+│   │   └── BrahmaLanguageEnhancements.jsx
+│   ├── LayerTagSelector.jsx
+│   ├── memory
+│   │   └── WisdomMemory.jsx
+│   ├── onboarding
+│   │   ├── AvatarSelector.jsx
+│   │   ├── emotionColors.js
+│   │   ├── OnboardingFlow.jsx
+│   │   ├── OnboardingStatus.jsx
+│   │   ├── SageIntro.jsx
+│   │   └── SageNamingRitual.jsx
+│   ├── PromptSuggestion.jsx
+│   ├── SettingsPanel.js
+│   ├── SpeakButton.jsx
+│   ├── tools
+│   │   ├── CurriculumFit.jsx
+│   │   ├── ROIEstimator.jsx
+│   │   └── TimeToCompletion.jsx
+│   ├── TranslateAndListen.jsx
+│   ├── transparency
+│   │   ├── ChatToolBar.jsx
+│   │   ├── colors
+│   │   ├── EchoSettings.jsx
+│   │   ├── EnhancedOptionCard.jsx 
+│   │   ├── HistoryPanel.jsx
+│   │   ├── MemorySettingsPanel.jsx
+│   │   ├── MemoryWisdom.jsx
+│   │   ├── ModelSelector.jsx
+│   │   ├── OptionCard.jsx
+│   │   ├── QuestSidebar.jsx\20013\20013\20013\20013\20013\20013\20013\20013\20013\20013\20013\20013\20013\20013\20013\20013
+│   │   ├── QuickReflectionRecorder.jsx
+│   │   ├── ReflectionSandbox.jsx
+│   │   ├── SageChat.jsx
+│   │   ├── sageMemorySystem.jsx
+│   │   ├── SettingsPanel.jsx
+│   │   ├── SimulationRunner.jsx
+│   │   ├── TransparencyEngine.jsx
+│   │   ├── VoiceModulator.jsx
+│   │   └── WisdomPanels.jsx
+│   └── ui-contracts
+│       └── LifetimePrivacyContract.jsx
+├── constants
+│   └── emotionColors.js
+├── context
+│   ├── SageContext.jsx
+│   └── UserPreferencesContext.jsx
+├── data
+│   ├── options.js
+│   ├── prompts.js
+│   └── stories.jsx
+├── hooks
+│   ├── useSpeechToText.js
+│   ├── useTextToSpeech.js
+│   └── useVoiceSettings.js
+├── index.css
+├── Lib
+│   ├── sageMemoryEngine.js
+│   └── timeIntel.js
+├── main.jsx
+├── services
+│   └── localData.js
+├── styles
+│   └── global.css
+└── utils
+    ├── exporters.js
+    ├── sentimentAnalysis.js
+    └── sessionMemory.js
+
+23 directories, 89 files
